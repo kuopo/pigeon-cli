@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+import sys
+import time
+import httplib
+import argparse
+import simplejson as json
+from datetime import timedelta
+from pprint import pprint
+
+
+HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
+PORT = 50003
+
+
+def get_service_info(service_id):
+    try:
+        conn = httplib.HTTPConnection(host=HOST, port=PORT)
+        conn.request('GET', "/service/" + service_id)
+        resp = conn.getresponse()
+        body = resp.read()
+
+    except Exception as e:
+        raise Exception('Connection Error: %s' % e)
+    finally:
+        conn.close()
+
+    if resp.status >= 400:
+        raise ValueError('Response Error: %s, %s' % (resp.status, resp.reason))
+    return json.loads(body)
+
+
+parser = argparse.ArgumentParser(description='Query the properties of a service')
+parser.add_argument('service', help='Service identification')
+args = vars(parser.parse_args())
+
+
+resp = get_service_info(service_id=args['service'])
+print json.dumps(resp, indent=4)

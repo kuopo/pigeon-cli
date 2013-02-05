@@ -1,0 +1,63 @@
+#!/usr/bin/python
+
+import sys
+import time
+import httplib
+import argparse
+import simplejson as json
+from datetime import timedelta
+from pprint import pprint
+
+
+HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
+PORT = 50003
+
+def post_service_info(service_id, size, count):
+    body = {}
+
+    if service_id is None:
+        return -1
+
+    if size is not None: 
+        body['claim_size'] = size
+
+    if count is not None:
+        body['claim_count'] = count
+
+    try:
+        conn = httplib.HTTPConnection(host=HOST, port=PORT)
+        conn.connect()
+        request = conn.putrequest('POST', '/service/%s' % (service_id))
+        reqbody = json.dumps(body)
+        headers = {}
+        headers['Content-Type'] = 'application/json'
+        headers['Content-Length'] = "%d" % (len(reqbody))
+        for k in headers:
+            conn.putheader(k, headers[k])
+        conn.endheaders()
+
+        conn.send(reqbody)
+
+        resp = conn.getresponse()
+        body = resp.read()
+
+    except Exception as e:
+        raise Exception('Connection Error: %s' % e)
+    finally:
+        conn.close()
+
+    if resp.status >= 400:
+        raise ValueError('Response Error: %s, %s' % (resp.status, resp.reason))
+    return json.loads(body)
+
+
+
+parser = argparse.ArgumentParser(description='Update the properties of a service')
+parser.add_argument('service', help='Service identification')
+parser.add_argument('-s','--size', help='Claimed size of containers')
+parser.add_argument('-c','--count', help='Claimed count of containers')
+args = vars(parser.parse_args())
+
+
+resp = post_service_info(service_id=args['service'], size=args['size'], count=args['count'])
+print json.dumps(resp)
