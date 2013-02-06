@@ -3,16 +3,20 @@
 import sys
 import time
 import httplib
+import base64
 import argparse
 import simplejson as json
 from datetime import timedelta
 from pprint import pprint
+import traceback
 
 
-HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
-PORT = 50003
+#HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
+#PORT = 50003
+HOST = "restapi.pigeonmtk.twbbs.org"
+PORT = 80
 
-def post_service_info(service_id, size, count):
+def post_service_info(service_id, size, count, username, password, verbose):
     body = {}
 
     if service_id is None:
@@ -26,12 +30,15 @@ def post_service_info(service_id, size, count):
 
     try:
         conn = httplib.HTTPConnection(host=HOST, port=PORT)
+        if verbose: conn.set_debuglevel(1)
         conn.connect()
         request = conn.putrequest('POST', '/service/%s' % (service_id))
         reqbody = json.dumps(body)
         headers = {}
         headers['Content-Type'] = 'application/json'
         headers['Content-Length'] = "%d" % (len(reqbody))
+        base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+        headers['Authorization'] = "Basic " + base64string
         for k in headers:
             conn.putheader(k, headers[k])
         conn.endheaders()
@@ -42,6 +49,7 @@ def post_service_info(service_id, size, count):
         body = resp.read()
 
     except Exception as e:
+        traceback.print_exc(file=sys.stdout)
         raise Exception('Connection Error: %s' % e)
     finally:
         conn.close()
@@ -56,8 +64,11 @@ parser = argparse.ArgumentParser(description='Update the properties of a service
 parser.add_argument('service', help='Service identification')
 parser.add_argument('-s','--size', help='Claimed size of containers')
 parser.add_argument('-c','--count', help='Claimed count of containers')
+parser.add_argument('--key', help='Developer key for authentication', required=True)
+parser.add_argument('--secret', help='Developer secret for authentication', required=True)
+parser.add_argument('-v','--verbose', help='Print debug message', action='store_true')
 args = vars(parser.parse_args())
 
 
-resp = post_service_info(service_id=args['service'], size=args['size'], count=args['count'])
-print json.dumps(resp)
+resp = post_service_info(service_id=args['service'], size=args['size'], count=args['count'], username=args['key'], password=args['secret'], verbose=args['verbose'])
+print json.dumps(resp, indent=4)
