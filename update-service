@@ -72,7 +72,7 @@ def post_service_info(args):
         conn = httplib.HTTPConnection(host=host, port=port)
         if debug: conn.set_debuglevel(1)
         conn.connect()
-        request = conn.putrequest('POST', '/service/%s' % (service_id))
+        request = conn.putrequest('PUT', '/service/%s' % (service_id))
         reqbody = json.dumps(body)
         headers = {}
         headers['Content-Type'] = 'application/json'
