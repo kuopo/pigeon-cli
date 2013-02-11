@@ -18,7 +18,7 @@ HOST = "restapi.pigeonmtk.twbbs.org"
 PORT = 80
 
 
-parser = argparse.ArgumentParser(description='Query the properties of a service')
+parser = argparse.ArgumentParser(description='Retrieve the properties of a service')
 parser.add_argument('service', nargs='*', default='', help='Service identification')
 parser.add_argument('--key', help='Developer key for authentication', required=True)
 parser.add_argument('--secret', help='Developer secret for authentication', required=True)
