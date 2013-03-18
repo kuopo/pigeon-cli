@@ -22,8 +22,8 @@ parser.add_argument('-s','--size', help='Claimed size of containers')
 parser.add_argument('-c','--count', help='Claimed count of containers')
 parser.add_argument('--name', help='Service name')
 parser.add_argument('--repo', help='Service repository')
+parser.add_argument('--commit', help='Repository commit id')
 parser.add_argument('--description', help='Service description')
-parser.add_argument('--template', help='Service template')
 parser.add_argument('--key', help='Developer key for authentication', required=True)
 parser.add_argument('--secret', help='Developer secret for authentication', required=True)
 parser.add_argument('--host', help='API server hostname (default: restapi.pigeonmtk.twbbs.org)', default=DEFAULT_HOST)
@@ -51,14 +51,14 @@ def post_service_info(args):
         if args['repo'] is not None:
             if args['repo'] == "": body['repo'] = None
             else: body['repo'] = args['repo']
+
+        if args['commit'] is not None:
+            if args['commit'] == "": body['commit_id'] = None
+            else: body['commit_id'] = args['commit']
     
         if args['description'] is not None:
             if args['description'] == "": body['service_description'] = None
             else: body['service_description'] = args['description']
-    
-        if args['template'] is not None:
-            if args['template'] == "": body['template'] = None
-            else: body['template'] = args['template']
     
         debug = args['debug']
         username = args['key']
