@@ -5,7 +5,7 @@ import time
 import httplib
 import base64
 import argparse
-import simplejson as json
+import json
 from datetime import timedelta
 from pprint import pprint
 import traceback
@@ -20,6 +20,7 @@ DEFAULT_PORT = 80
 parser = argparse.ArgumentParser(description='Create a service')
 parser.add_argument('-s','--size', help='Claimed size of containers')
 parser.add_argument('-c','--count', help='Claimed count of containers')
+parser.add_argument('--id', help='Service ID', required=True)
 parser.add_argument('--name', help='Service name')
 parser.add_argument('--repo', help='Service repository')
 parser.add_argument('--commit', help='Repository commit id')
@@ -36,6 +37,8 @@ def post_service_info(args):
     body = {}
 
     try:
+        body['service_id'] = args['id']
+
         if args['size'] is not None:
             if args['size'] == "": body['claim_size'] = None
             else: body['claim_size'] = args['size']

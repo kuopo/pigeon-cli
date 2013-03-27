@@ -6,7 +6,7 @@ import httplib
 import urllib2
 import base64
 import argparse
-import simplejson as json
+import json
 from datetime import timedelta
 from pprint import pprint
 import traceback
