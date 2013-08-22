@@ -11,28 +11,6 @@ from pprint import pprint
 import traceback
 
 
-#HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
-#PORT = 50003
-DEFAULT_HOST = "restapi.pigeonmtk.twbbs.org"
-DEFAULT_PORT = 80
-
-
-parser = argparse.ArgumentParser(description='Update the properties of a service')
-parser.add_argument('service', help='Service identification')
-parser.add_argument('-s','--size', help='Claimed size of containers')
-parser.add_argument('-c','--count', help='Claimed count of containers')
-parser.add_argument('--name', help='Service name')
-parser.add_argument('--repo', help='Service repository')
-parser.add_argument('--commit', help='Repository commit id')
-parser.add_argument('--description', help='Service description')
-parser.add_argument('--key', help='Developer key for authentication', required=True)
-parser.add_argument('--secret', help='Developer secret for authentication', required=True)
-parser.add_argument('--host', help='API server hostname (default: restapi.pigeonmtk.twbbs.org)', default=DEFAULT_HOST)
-parser.add_argument('--port', help='API server port (default: 80)', default=DEFAULT_PORT)
-parser.add_argument('--debug', help='Print debug message', action='store_true')
-args = vars(parser.parse_args())
-
-
 def post_service_info(args):
     body = {}
 
@@ -105,5 +83,28 @@ def post_service_info(args):
     return json.loads(body)
 
 
-resp = post_service_info(args)
-print json.dumps(resp, indent=4)
+if __name__ == "__main__":
+    #HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
+    #PORT = 50003
+    DEFAULT_HOST = "restapi.pigeonmtk.twbbs.org"
+    DEFAULT_PORT = 80
+    
+    
+    parser = argparse.ArgumentParser(description='update the properties of a service')
+    parser.add_argument('service', help='service identification')
+    parser.add_argument('-s','--size', help='claimed size of containers')
+    parser.add_argument('-c','--count', help='claimed count of containers')
+    parser.add_argument('--name', help='service name')
+    parser.add_argument('--repo', help='service repository')
+    parser.add_argument('--commit', help='repository commit id')
+    parser.add_argument('--description', help='service description')
+    parser.add_argument('--key', help='developer key for authentication', required=True)
+    parser.add_argument('--secret', help='developer secret for authentication', required=True)
+    parser.add_argument('--host', help='API server hostname (default: restapi.pigeonmtk.twbbs.org)', default=DEFAULT_HOST)
+    parser.add_argument('--port', help='API server port (default: 80)', default=DEFAULT_PORT)
+    parser.add_argument('--debug', help='print debug message', action='store_true')
+    args = vars(parser.parse_args())
+    
+    
+    resp = post_service_info(args)
+    print json.dumps(resp, indent=4)

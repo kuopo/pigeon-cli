@@ -12,23 +12,7 @@ from pprint import pprint
 import traceback
 
 
-#HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
-#PORT = 50003
-HOST = "restapi.pigeonmtk.twbbs.org"
-PORT = 80
-
-
-parser = argparse.ArgumentParser(description='Delete a service')
-parser.add_argument('service', nargs='+', default='', help='Service identification')
-parser.add_argument('--key', help='Developer key for authentication', required=True)
-parser.add_argument('--secret', help='Developer secret for authentication', required=True)
-parser.add_argument('--host', help='API server hostname (default: restapi.pigeonmtk.twbbs.org)', default=HOST)
-parser.add_argument('--port', help='API server port (default: 80)', default=PORT)
-parser.add_argument('--debug', help='Print debug message', action='store_true')
-args = vars(parser.parse_args())
-
-
-def get_service_info(args):
+def delete_service_info(args):
     try:
         service_list = args['service']
         username = args['key']
@@ -67,5 +51,22 @@ def get_service_info(args):
     return json.loads(body)
 
 
-resp = get_service_info(args)
-print json.dumps(resp, indent=4, sort_keys=True)
+if __name__ == "__main__":
+    #HOST = "ec2-184-169-213-66.us-west-1.compute.amazonaws.com"
+    #PORT = 50003
+    HOST = "restapi.pigeonmtk.twbbs.org"
+    PORT = 80
+    
+    
+    parser = argparse.ArgumentParser(description='delete a service')
+    parser.add_argument('service', nargs='+', default='', help='service identification')
+    parser.add_argument('--key', help='developer key for authentication', required=True)
+    parser.add_argument('--secret', help='developer secret for authentication', required=True)
+    parser.add_argument('--host', help='API server hostname (default: restapi.pigeonmtk.twbbs.org)', default=HOST)
+    parser.add_argument('--port', help='API server port (default: 80)', default=PORT)
+    parser.add_argument('--debug', help='print debug message', action='store_true')
+    args = vars(parser.parse_args())
+    
+    
+    resp = delete_service_info(args)
+    print json.dumps(resp, indent=4, sort_keys=True)
